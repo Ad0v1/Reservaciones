@@ -1,24 +1,23 @@
-<?php // create_admin.php (ejecutar una vez y luego eliminar)
-include "db.php";
+<?php
+// admin/registeradmin.php
+include '../includes/db.php';
 
-// 1. Datos del administrador (MODIFICAR ESTOS VALORES)
+// Cambiar estas credenciales si es necesario
 $username = "administrador";
 $password = "admin";
 
-// 2. Encriptación segura
+// Encriptar la contraseña
 $hashed_password = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
 
-// 3. Query inteligente
 $sql = "INSERT INTO users (username, password, role) 
         VALUES (?, ?, 'admin') 
         ON DUPLICATE KEY UPDATE password = ?";
 
-// 4. Ejecución segura
-$stmt = mysqli_prepare($con, $sql);
+$stmt = mysqli_prepare($conexion, $sql);
 mysqli_stmt_bind_param($stmt, "sss", $username, $hashed_password, $hashed_password);
 
 if (mysqli_stmt_execute($stmt)) {
-    echo "Admin creado. Credenciales:\nUsuario: $username\nContraseña: $password";
+    echo "✅ Admin creado:<br>Usuario: $username<br>Contraseña: $password";
 } else {
-    echo "Error: " . mysqli_error($con);
+    echo "❌ Error: " . mysqli_error($conexion);
 }
