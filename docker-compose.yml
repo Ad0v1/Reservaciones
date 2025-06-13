@@ -5,8 +5,9 @@ services:
     ports:
       - "8080:80"
     volumes:
-    - ./public:/var/www/html
-    - ./assets:/var/www/html/assets
+      - ./frontend/public:/var/www/html
+      - ./frontend/assets:/var/www/html/assets
+
 
     env_file: 
       - .env
