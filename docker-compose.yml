@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/public:/var/www/html
+      - ./frontend/assets:/var/www/html/assets
+
+
+    env_file: 
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: reservaciones
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
