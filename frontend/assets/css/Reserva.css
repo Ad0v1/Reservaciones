@@ -1,972 +1,1049 @@
 /* Estilos base para el formulario de reserva */
 :root {
-    --primary-color: #4caf50;
-    --primary-hover: #45a049;
-    --primary-light: rgba(76, 175, 80, 0.1);
-    --secondary-color: #f8f9fa;
-    --text-color: #333;
-    --text-light: #666;
-    --border-color: #e0e0e0;
-    --error-color: #f44336;
-    --success-color: #4caf50;
-    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
-    --border-radius-sm: 6px;
-    --border-radius-md: 8px;
-    --border-radius-lg: 12px;
-    --font-family: "EB Garamond", "Garamond", serif;
-  }
-  
-  /* Importar fuente Garamond */
-  @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap");
-  
-  /* Estilos generales */
-  body {
-    font-family: var(--font-family);
-    color: var(--text-color);
-    line-height: 1.6;
-  }
-  
-  /* Contenedor principal del formulario */
-  #rform {
-    max-width: 1000px;
-    margin: 0 auto 60px;
-    position: relative;
-    font-family: var(--font-family);
-  }
-  
-  /* Estilos para los pasos del formulario */
-  .form-step {
-    display: none;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    margin-bottom: 40px;
+  --primary-color: #e74c3c;
+  --primary-hover: #c0392b;
+  --primary-light: rgba(231, 76, 60, 0.1);
+  --secondary-color: #f8f9fa;
+  --text-color: #333;
+  --text-light: #666;
+  --border-color: #e0e0e0;
+  --light-gray: #f5f5f5;
+  --medium-gray: #e0e0e0;
+  --dark-gray: #777;
+  --error-color: #f44336;
+  --success-color: #2ecc71;
+  --accent-color: #3498db;
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition: all 0.3s ease;
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius: 6px;
+  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --font-family: "EB Garamond", "Garamond", serif;
+}
+
+/* Importar fuente Garamond */
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap");
+
+/* Estilos generales */
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.main-content {
+  padding: 40px 0;
+  min-height: 80vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-family);
+}
+
+/* Alertas */
+.alert {
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  font-weight: 500;
+  animation: slideIn 0.5s ease-out;
+}
+
+.alert-danger {
+  background-color: #fde8e8;
+  color: var(--error-color);
+  border-left: 4px solid var(--error-color);
+}
+
+.alert-success {
+  background-color: #e8f8f0;
+  color: var(--success-color);
+  border-left: 4px solid var(--success-color);
+}
+
+/* Indicador de pasos */
+.steps-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--medium-gray);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: var(--transition);
+}
+
+.step.active .step-number {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2);
+}
+
+.step-label {
+  font-size: 14px;
+  color: var(--dark-gray);
+  font-weight: 500;
+}
+
+.step.active .step-label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.step-line {
+  flex-grow: 1;
+  height: 3px;
+  background-color: var(--medium-gray);
+  margin: 0 15px;
+  position: relative;
+  top: -20px;
+  z-index: 0;
+}
+
+/* Contenedor del formulario */
+.reservation-form-container {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Formulario */
+.reservation-form {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -10px;
+  margin-left: -10px;
+}
+
+.form-group.col-md-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 0 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 1.6rem;
+  font-family: var(--font-family);
+}
+
+.required {
+  color: var(--error-color);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  transition: var(--transition);
+  font-family: var(--font-family);
+}
+
+.form-control:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Estilos específicos para campos de selección */
+select.form-control {
+  font-size: 1.6rem;
+  padding: 16px 20px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 20px;
+  padding-right: 50px;
+}
+
+/* Estilos específicos para campos de fecha y hora */
+input[type="date"],
+input[type="time"] {
+  font-size: 1.7rem;
+  padding: 16px 20px;
+  font-weight: 500;
+}
+
+/* Opciones de menú */
+.menu-options {
+  background-color: var(--light-gray);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-options h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Botones */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn i {
+  margin-left: 8px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-whatsapp {
+  background-color: #25d366;
+  color: #fff;
+}
+
+.btn-whatsapp:hover {
+  background-color: #128c7e;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Botones de menú */
+.controles-menu {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.boton-menu {
+  padding: 15px 25px;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-weight: 500;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  font-size: 1.6rem;
+  font-family: var(--font-family);
+}
+
+.boton-menu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s;
+}
+
+.boton-menu:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.boton-menu:hover::before {
+  left: 100%;
+}
+
+.boton-menu.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Resumen de la reserva */
+.reservation-summary {
+  margin-bottom: 30px;
+}
+
+.reservation-summary h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.summary-details {
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.summary-details:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.summary-row {
+  display: flex;
+  margin-bottom: 10px;
+  padding: 5px 0;
+}
+
+.summary-label {
+  flex: 0 0 30%;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.summary-value {
+  flex: 0 0 70%;
+  color: var(--dark-gray);
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: var(--medium-gray);
+  margin: 15px 0;
+}
+
+.menu-details p {
+  margin: 5px 0;
+}
+
+.total-row {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.total-row .summary-value {
+  color: var(--primary-color);
+}
+
+/* Instrucciones de pago */
+.payment-instructions {
+  background-color: #fff;
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.payment-instructions:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.payment-instructions h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.payment-instructions p {
+  margin-bottom: 20px;
+}
+
+.payment-tabs {
+  margin-top: 20px;
+}
+
+.payment-tab-header {
+  display: flex;
+  border-bottom: 1px solid var(--medium-gray);
+  margin-bottom: 20px;
+}
+
+.payment-tab-btn {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--dark-gray);
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+  margin-right: 10px;
+}
+
+.payment-tab-btn.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.payment-tab-btn i {
+  margin-right: 8px;
+}
+
+.payment-tab-pane {
+  display: none;
+}
+
+.payment-tab-pane.active {
+  display: block;
+}
+
+.payment-tab-pane h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.payment-tab-pane ul,
+.payment-tab-pane ol {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.payment-tab-pane li {
+  margin-bottom: 8px;
+}
+
+.qr-code {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.qr-code img {
+  max-width: 200px;
+  border: 1px solid var(--medium-gray);
+  padding: 10px;
+  background-color: #fff;
+}
+
+.whatsapp-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Confirmación */
+.reservation-confirmation {
+  text-align: center;
+  padding: 30px;
+}
+
+.confirmation-message {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.confirmation-message i {
+  font-size: 5rem;
+  color: var(--success-color);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.confirmation-message h3 {
+  font-size: 2rem;
+  color: var(--success-color);
+  margin-bottom: 15px;
+}
+
+.important-notice {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin: 20px 0;
+  text-align: left;
+  border-radius: var(--border-radius);
+}
+
+.important-notice h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #856404;
+}
+
+.important-notice ul {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.notification-sent {
+  background-color: #e8f8f0;
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin: 20px 0;
+}
+
+.confirmation-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Estilos para el registro de pago */
+.payment-registration {
+  margin-bottom: 30px;
+}
+
+.payment-intro {
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.payment-form {
+  margin-bottom: 20px;
+}
+
+.payment-method-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.payment-method-option {
+  flex: 1;
+  min-width: 150px;
+}
+
+.payment-label {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.payment-label:hover {
+  border-color: var(--accent-color);
+}
+
+input[type="radio"]:checked + .payment-label {
+  border-color: var(--primary-color);
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+.payment-label i {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.form-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: var(--dark-gray);
+}
+
+/* Estilos para la carga de archivos */
+.file-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: var(--light-gray);
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.file-label:hover {
+  background-color: var(--medium-gray);
+}
+
+.file-label i {
+  margin-right: 8px;
+}
+
+.file-name {
+  margin-left: 10px;
+  color: var(--dark-gray);
+}
+
+/* Estilos adicionales para mejorar la experiencia de usuario */
+.error-field {
+  border: 2px solid var(--error-color) !important;
+  background-color: #fff8f8 !important;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity var(--transition-normal), transform var(--transition-normal);
+    transform: translateY(10px);
   }
-  
-  .form-step.active {
-    display: block;
+  to {
     opacity: 1;
     transform: translateY(0);
-    animation: fadeInUp 0.5s ease-out forwards;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInStaggered {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animación de carga para el botón de pago */
+.btn-pagar.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-pagar.loading::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 50%;
+  left: 50%;
+  margin-left: -12px;
+  margin-top: -12px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Animación para los pasos del formulario */
+.form-step {
+  display: none;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.form-step.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Animación de entrada para los elementos del resumen */
+.resumen-seccion {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInStaggered 0.5s ease forwards;
+}
+
+.resumen-seccion:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.resumen-seccion:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.resumen-seccion:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+/* Efecto de onda para botones */
+.ripple {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .form-group.col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
   
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .form-step {
+    padding: 20px;
   }
-  
-  /* Títulos y encabezados */
-  .form-step h1 {
-    color: var(--text-color);
-    margin-bottom: 30px;
-    font-weight: 700;
-    font-size: 2.6rem;
-    text-align: center;
-    position: relative;
-    padding-bottom: 15px;
-    font-family: var(--font-family);
+
+  .boton-menu {
+    width: 100%;
+    margin: 5px 0;
+    font-size: 1.4rem;
   }
-  
-  .form-step h1::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background-color: var(--primary-color);
-    border-radius: 3px;
+
+  .seccion-menu {
+    padding: 15px;
   }
-  
-  .form-step h2 {
-    color: var(--text-color);
-    margin-bottom: 25px;
-    font-weight: 600;
-    font-size: 2.2rem;
-    font-family: var(--font-family);
+
+  .form-row-group {
+    flex-direction: column;
+    gap: 15px;
   }
-  
-  /* Indicador de progreso mejorado */
+
   .progress-steps {
-    display: flex;
-    justify-content: space-between;
-    margin: 50px auto;
-    position: relative;
-    max-width: 800px;
-    padding: 0 20px;
+    margin: 30px auto;
   }
-  
-  .progress-steps::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    height: 6px;
-    width: 100%;
-    background-color: var(--border-color);
-    z-index: 1;
+
+  .step {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
   }
-  
-  .progress-steps::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    height: 6px;
-    background-color: var(--primary-color);
-    z-index: 1;
-    width: 0%;
-    transition: width var(--transition-normal);
+
+  .resumen {
+    padding: 20px;
   }
-  
-  .progress-steps[data-step="1"]::after {
-    width: 0%;
+
+  .precio-total {
+    font-size: 2.8rem;
   }
-  .progress-steps[data-step="2"]::after {
-    width: 33.33%;
+
+  .form-step h1 {
+    font-size: 2.2rem;
   }
-  .progress-steps[data-step="3"]::after {
-    width: 66.66%;
+
+  .form-step h2 {
+    font-size: 1.8rem;
   }
-  .progress-steps[data-step="4"]::after {
-    width: 100%;
+
+  .mensaje-exito {
+    font-size: 1.8rem;
+    padding: 20px 25px;
+  }
+
+  .mensaje-exito h3 {
+    font-size: 2.2rem;
+  }
+
+  .mensaje-exito p {
+    font-size: 1.7rem;
+  }
+
+  label {
+    font-size: 1.4rem;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 1.4rem;
+  }
+
+  input[type="date"],
+  input[type="time"] {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .steps-indicator {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .step {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: var(--secondary-color);
-    border: 3px solid var(--border-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    color: var(--text-light);
-    position: relative;
-    z-index: 2;
-    transition: all var(--transition-normal);
-    font-size: 1.8rem;
+    flex-direction: row;
+    margin-bottom: 10px;
+    width: 100%;
   }
   
-  .step::after {
-    content: attr(data-step);
-    position: absolute;
-    top: -45px;
-    font-size: 1.6rem;
-    color: var(--text-light);
-    font-weight: 600;
-    width: 160px;
-    text-align: center;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0.8;
-    transition: all var(--transition-normal);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  .step-number {
+    margin-right: 10px;
+    margin-bottom: 0;
   }
   
-  .step.active {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.2);
-    transform: scale(1.15);
+  .step-line {
+    width: 3px;
+    height: 20px;
+    margin: 5px 0 5px 18px;
   }
   
-  .step.active::after {
-    color: var(--primary-color);
-    font-weight: bold;
-    opacity: 1;
-    font-size: 1.8rem;
+  .form-actions {
+    flex-direction: column;
   }
   
-  .step.completed {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
   }
   
-  .step.completed::before {
-    content: "✓";
-    font-size: 32px;
+  .summary-row {
+    flex-direction: column;
   }
   
-  /* Secciones de menú */
-  .seccion-menu {
-    display: none;
-    margin-bottom: 25px;
-    padding: 25px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md);
-    background-color: var(--secondary-color);
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
+  .summary-label, .summary-value {
+    flex: 0 0 100%;
   }
   
-  .seccion-menu.active {
-    display: block;
-    animation: fadeIn 0.5s ease-out forwards;
+  .summary-label {
+    margin-bottom: 5px;
   }
   
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  .payment-method-options {
+    flex-direction: column;
   }
   
-  .seccion-menu h2 {
-    color: var(--text-color);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--primary-color);
+  .whatsapp-button {
+    margin-top: 15px;
+  }
+  
+  .whatsapp-button .btn {
+    width: 100%;
+  }
+  
+  .controles-menu {
+    flex-direction: column;
+  }
+
+  .form-row-group {
+    flex-direction: column;
+  }
+
+  .form-step h1 {
     font-size: 2rem;
   }
-  
-  /* Botones de menú */
-  .controles-menu {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
+
+  .precio-total {
+    font-size: 2.5rem;
   }
-  
-  .boton-menu {
-    padding: 15px 25px;
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    font-weight: 500;
-    flex: 1;
-    min-width: 120px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+
+  .step {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+
+  .mensaje-exito {
     font-size: 1.6rem;
-    font-family: var(--font-family);
+    padding: 15px 20px;
   }
-  
-  .boton-menu::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.7s;
+
+  .mensaje-exito h3 {
+    font-size: 1.8rem;
   }
-  
-  .boton-menu:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+
+  .mensaje-exito p {
+    font-size: 1.5rem;
   }
-  
-  .boton-menu:hover::before {
-    left: 100%;
-  }
-  
-  .boton-menu.active {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-  }
-  
-  /* Campos de formulario */
+
   label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 500;
-    color: var(--text-color);
-    font-size: 1.6rem;
-    font-family: var(--font-family);
+    font-size: 1.3rem;
   }
-  
-  /* Estilos específicos para etiquetas en la sección de menú */
-  .seccion-menu label {
-    font-size: 1.7rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  
+
   input,
   select,
   textarea {
-    width: 100%;
-    padding: 15px 18px;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    font-size: 1.5rem;
-    transition: all var(--transition-normal);
-    background-color: white;
-    color: var(--text-color);
-    margin-bottom: 25px;
-    font-family: var(--font-family);
+    font-size: 1.3rem;
   }
-  
-  /* Estilos específicos para campos de selección */
-  select {
-    font-size: 1.6rem;
-    padding: 16px 20px;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 20px;
-    padding-right: 50px;
-  }
-  
-  /* Estilos específicos para campos de fecha y hora */
+
   input[type="date"],
-  input[type="time"],
-  select[name="rtime"] {
-    font-size: 1.7rem;
-    padding: 16px 20px;
-    font-weight: 500;
+  input[type="time"] {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .step::after {
+    display: none;
   }
   
-  input:focus,
-  select:focus,
-  textarea:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-  }
-  
-  /* Botones de navegación */
-  .botones-navegacion {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-  }
-  
-  button[type="button"],
-  .btn-volver,
-  .btn-pagar {
-    padding: 15px 30px;
-    border-radius: var(--border-radius-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    font-size: 1.5rem;
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    font-family: var(--font-family);
-  }
-  
-  button[type="button"]::before,
-  .btn-volver::before,
-  .btn-pagar::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.7s;
-  }
-  
-  button[type="button"]:hover::before,
-  .btn-volver:hover::before,
-  .btn-pagar:hover::before {
-    left: 100%;
-  }
-  
-  button[type="button"] {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  button[type="button"]:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .btn-volver {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
-  }
-  
-  .btn-volver:hover {
-    background-color: #e9ecef;
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  .btn-pagar {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 18px 35px;
-    font-weight: 600;
-    position: relative;
-    font-size: 1.6rem;
-  }
-  
-  .btn-pagar:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .btn-pagar:active {
-    transform: translateY(-1px);
-  }
-  
-  /* Estilos para el resumen de la reserva */
-  .resumen {
-    background-color: var(--secondary-color);
-    border-radius: var(--border-radius-md);
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
-  }
-  
-  .resumen:hover {
-    box-shadow: var(--shadow-md);
-  }
-  
-  .resumen-seccion {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .resumen-seccion:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-  
-  .resumen-seccion h3 {
-    color: var(--text-color);
-    margin-bottom: 25px;
-    font-size: 2.2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .menu-item {
-    background-color: white;
-    border-radius: var(--border-radius-sm);
-    padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-    border-left: 4px solid var(--primary-color);
-  }
-  
-  .menu-item:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+  .progress-steps::before {
+    top: 50%;
   }
   
   .menu-item h4 {
-    color: var(--text-color);
-    margin-bottom: 18px;
-    font-size: 1.9rem;
-    font-weight: 600;
-  }
-  
-  .menu-item ul {
-    list-style: none;
-    padding-left: 15px;
+    font-size: 1.5rem;
   }
   
   .menu-item li {
-    margin-bottom: 12px;
-    font-size: 1.7rem;
-    color: var(--text-light);
-    position: relative;
-    padding-left: 30px;
-    line-height: 1.4;
+    font-size: 1.3rem;
   }
-  
-  .menu-item li:before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--primary-color);
-    font-weight: bold;
-    font-size: 2rem;
-  }
-  
-  .total {
-    background-color: #f0f8ff;
-    padding: 25px;
-    border-radius: var(--border-radius-sm);
-    border-left: 4px solid var(--primary-color);
-    transition: all var(--transition-normal);
-  }
-  
-  .total:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .precio-total {
-    font-size: 3.2rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    margin: 20px 0;
-  }
-  
-  .detalle-total {
-    color: var(--text-light);
-    font-size: 1.8rem;
-  }
-  
-  /* Estilos para la sección de tarjeta */
-  .seccion-tarjeta {
-    background-color: white;
-    border-radius: var(--border-radius-md);
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
-    border: 1px solid var(--border-color);
-  }
-  
-  .seccion-tarjeta:hover {
-    box-shadow: var(--shadow-md);
-  }
-  
-  .form-row {
-    margin-bottom: 20px;
-    position: relative;
-  }
-  
-  .form-row-group {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .form-row-group .form-row {
-    flex: 1;
-  }
-  
-  /* Estilos para el modal de notificación */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(3px);
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-  }
-  
-  .modal-overlay.show {
-    opacity: 1;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 35px;
-    border-radius: var(--border-radius-md);
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: var(--shadow-lg);
-    transform: scale(0.9);
-    transition: transform var(--transition-normal);
-    font-family: var(--font-family);
-  }
-  
-  .modal-overlay.show .modal-content {
-    transform: scale(1);
-  }
-  
-  .modal-content p {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-    line-height: 1.5;
-  }
-  
-  .modal-close {
-    margin-top: 25px;
-    padding: 15px 35px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-weight: 500;
-    transition: all var(--transition-normal);
-    font-size: 1.5rem;
-    font-family: var(--font-family);
-  }
-  
-  .modal-close:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  /* Estilos para alertas */
-  .alert {
-    padding: 20px 25px;
-    margin: 25px 0;
-    border-radius: var(--border-radius-sm);
-    font-weight: 500;
-    position: relative;
-    animation: slideIn 0.5s ease-out;
-    font-size: 1.5rem;
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .error {
-    background-color: #fdecea;
-    border-left: 4px solid var(--error-color);
-    color: #721c24;
-  }
-  
-  .success {
-    background-color: #e8f5e9;
-    border-left: 4px solid var(--success-color);
-    color: #155724;
-  }
-  
-  /* Mensaje de reserva exitosa */
-  .mensaje-exito {
-    background-color: #e8f5e9;
-    border-left: 6px solid var(--success-color);
-    color: #155724;
-    padding: 25px 30px;
-    margin: 30px 0;
-    border-radius: var(--border-radius-sm);
-    font-weight: 600;
-    font-size: 2.2rem;
-    text-align: center;
-    box-shadow: var(--shadow-md);
-    animation: fadeInUp 0.6s ease-out;
-  }
-  
-  .mensaje-exito h3 {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    color: var(--success-color);
-  }
-  
-  .mensaje-exito p {
-    font-size: 2rem;
-    line-height: 1.5;
-  }
-  
-  /* Agregar estilos para campos con error */
-  .error-field {
-    border: 2px solid var(--error-color) !important;
-    background-color: #fff8f8 !important;
-    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
-  }
-  
-  /* Animación de carga para el botón de pago */
-  .btn-pagar.loading {
-    position: relative;
-    color: transparent !important;
-    pointer-events: none;
-  }
-  
-  .btn-pagar.loading::after {
-    content: "";
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    top: 50%;
-    left: 50%;
-    margin-left: -12px;
-    margin-top: -12px;
-    border-radius: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Animación de entrada para los elementos del resumen */
-  .resumen-seccion {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInStaggered 0.5s ease forwards;
-  }
-  
-  .resumen-seccion:nth-child(1) {
-    animation-delay: 0.1s;
-  }
-  
-  .resumen-seccion:nth-child(2) {
-    animation-delay: 0.3s;
-  }
-  
-  .resumen-seccion:nth-child(3) {
-    animation-delay: 0.5s;
-  }
-  
-  @keyframes fadeInStaggered {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Animación para los campos de formulario */
-  input,
-  select,
-  textarea {
-    transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform
-      var(--transition-normal);
-  }
-  
-  input:focus,
-  select:focus,
-  textarea:focus {
-    transform: translateY(-2px);
-  }
-  
-  /* Animación para los botones de menú */
-  .boton-menu {
-    transition: all var(--transition-normal);
-  }
-  
-  .boton-menu:hover {
-    transform: translateY(-3px);
-  }
-  
-  .boton-menu:active {
-    transform: translateY(-1px);
-  }
-  
-  /* Estilos responsivos */
-  @media (max-width: 768px) {
-    .form-step {
-      padding: 20px;
-    }
-  
-    .boton-menu {
-      width: 100%;
-      margin: 5px 0;
-      font-size: 1.4rem;
-    }
-  
-    .seccion-menu {
-      padding: 15px;
-    }
-  
-    .form-row-group {
-      flex-direction: column;
-      gap: 15px;
-    }
-  
-    .progress-steps {
-      margin: 30px auto;
-    }
-  
-    .step {
-      width: 60px;
-      height: 60px;
-      font-size: 1.5rem;
-    }
-  
-    .step::after {
-      font-size: 1.4rem;
-      top: -40px;
-      width: 120px;
-    }
-  
-    .resumen {
-      padding: 20px;
-    }
-  
-    .precio-total {
-      font-size: 2.8rem;
-    }
-  
-    .menu-item h4 {
-      font-size: 1.7rem;
-    }
-  
-    .menu-item li {
-      font-size: 1.5rem;
-    }
-  
-    .form-step h1 {
-      font-size: 2.2rem;
-    }
-  
-    .form-step h2 {
-      font-size: 1.8rem;
-    }
-  
-    .mensaje-exito {
-      font-size: 1.8rem;
-      padding: 20px 25px;
-    }
-  
-    .mensaje-exito h3 {
-      font-size: 2.2rem;
-    }
-  
-    .mensaje-exito p {
-      font-size: 1.7rem;
-    }
-  
-    label {
-      font-size: 1.4rem;
-    }
-  
-    input,
-    select,
-    textarea {
-      font-size: 1.4rem;
-    }
-  
-    input[type="date"],
-    input[type="time"],
-    select[name="rtime"] {
-      font-size: 1.5rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .controles-menu {
-      flex-direction: column;
-    }
-  
-    .step::after {
-      display: none;
-    }
-  
-    .progress-steps::before {
-      top: 50%;
-    }
-  
-    .form-row-group {
-      flex-direction: column;
-    }
-  
-    .form-step h1 {
-      font-size: 2rem;
-    }
-  
-    .menu-item h4 {
-      font-size: 1.5rem;
-    }
-  
-    .menu-item li {
-      font-size: 1.3rem;
-    }
-  
-    .precio-total {
-      font-size: 2.5rem;
-    }
-  
-    .step {
-      width: 50px;
-      height: 50px;
-      font-size: 1.3rem;
-    }
-  
-    .mensaje-exito {
-      font-size: 1.6rem;
-      padding: 15px 20px;
-    }
-  
-    .mensaje-exito h3 {
-      font-size: 1.8rem;
-    }
-  
-    .mensaje-exito p {
-      font-size: 1.5rem;
-    }
-  
-    label {
-      font-size: 1.3rem;
-    }
-  
-    input,
-    select,
-    textarea {
-      font-size: 1.3rem;
-    }
-  
-    input[type="date"],
-    input[type="time"],
-    select[name="rtime"] {
-      font-size: 1.4rem;
-    }
-  }
-  
-  /* Efecto de onda para botones */
-  .ripple {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-  }
-  
-  @keyframes ripple {
-    to {
-      transform: scale(4);
-      opacity: 0;
-    }
-  }
-  
-  
+}

@@ -3,6 +3,8 @@ document.documentElement.classList.remove("no-js")
 document.documentElement.classList.add("js")
 let currentStep = 1
 
+
+
 // Función para mostrar modal con animación
 function showModal(message) {
   const modal = document.getElementById("notificationModal")
@@ -32,21 +34,23 @@ function closeModal() {
 // Función para calcular y actualizar el total en tiempo real
 function calcularTotal() {
   let total = 0
-  const personas = Number.parseInt(document.getElementById("rparty-size").value) || 0
+  const personas = Number.parseInt(document.getElementById("partySize").value) || 0 // Corregido de rparty-size a partySize
 
   // Verificar desayuno completo
-  if (document.getElementById("desayuno").value && document.getElementById("pan_desayuno").value) {
-    total += 9.0 * personas
-  }
-
-  // Verificar almuerzo completo (entrada y plato de fondo son obligatorios)
-  if (document.getElementById("almuerzo_entrada").value && document.getElementById("almuerzo_fondo").value) {
-    total += 14.5 * personas
-  }
-
-  // Verificar cena (plato principal es obligatorio)
-  if (document.getElementById("cena").value) {
-    total += 16.5 * personas
+  const menuType = document.getElementById("menuType").value; // Obtener el tipo de menú seleccionado
+  
+  if (menuType === 'desayuno') {
+    if (document.getElementById("desayunoBebida").value && document.getElementById("desayunoPan").value) {
+      total += 9.0 * personas
+    }
+  } else if (menuType === 'almuerzo') {
+    if (document.getElementById("almuerzoEntrada").value && document.getElementById("almuerzoFondo").value) {
+      total += 14.5 * personas
+    }
+  } else if (menuType === 'cena') {
+    if (document.getElementById("cenaPlato").value) {
+      total += 16.5 * personas
+    }
   }
 
   return total.toFixed(2)
@@ -54,45 +58,50 @@ function calcularTotal() {
 
 // Función para validar el paso actual
 function validateStep(step) {
+  // Limpiar errores previos
+  limpiarErrores();
+
   if (step === 1) {
-    // Verificar que al menos un menú esté seleccionado completamente
-    const desayunoCompleto = document.getElementById("desayuno").value && document.getElementById("pan_desayuno").value
-    const almuerzoCompleto =
-      document.getElementById("almuerzo_entrada").value && document.getElementById("almuerzo_fondo").value
-    const cenaCompleta = document.getElementById("cena").value
-
-    if (!desayunoCompleto && !almuerzoCompleto && !cenaCompleta) {
-      showModal("Debes seleccionar al menos un menú completo para continuar.")
-      return false
+    const menuType = document.getElementById("menuType").value;
+    if (!menuType) {
+      showModal("Debes seleccionar un tipo de menú.");
+      document.getElementById("menuType").classList.add("error-field");
+      return false;
     }
 
-    // Validar que si se selecciona parte del desayuno, se complete
-    if (
-      (document.getElementById("desayuno").value && !document.getElementById("pan_desayuno").value) ||
-      (!document.getElementById("desayuno").value && document.getElementById("pan_desayuno").value)
-    ) {
-      showModal("Debes completar todos los campos del Desayuno.")
-      return false
+    let valido = true;
+    if (menuType === 'desayuno') {
+      if (!document.getElementById("desayunoBebida").value || !document.getElementById("desayunoPan").value) {
+        showModal("Debes seleccionar todas las opciones obligatorias del desayuno.");
+        if (!document.getElementById("desayunoBebida").value) document.getElementById("desayunoBebida").classList.add("error-field");
+        if (!document.getElementById("desayunoPan").value) document.getElementById("desayunoPan").classList.add("error-field");
+        valido = false;
+      }
+    } else if (menuType === 'almuerzo') {
+      if (!document.getElementById("almuerzoEntrada").value || !document.getElementById("almuerzoFondo").value) {
+        showModal("Debes seleccionar todas las opciones obligatorias del almuerzo.");
+        if (!document.getElementById("almuerzoEntrada").value) document.getElementById("almuerzoEntrada").classList.add("error-field");
+        if (!document.getElementById("almuerzoFondo").value) document.getElementById("almuerzoFondo").classList.add("error-field");
+        valido = false;
+      }
+    } else if (menuType === 'cena') {
+      if (!document.getElementById("cenaPlato").value) {
+        showModal("Debes seleccionar el plato principal de la cena.");
+        if (!document.getElementById("cenaPlato").value) document.getElementById("cenaPlato").classList.add("error-field");
+        valido = false;
+      }
     }
-
-    // Validar que si se selecciona parte del almuerzo, se completen los campos obligatorios
-    if (
-      (document.getElementById("almuerzo_entrada").value && !document.getElementById("almuerzo_fondo").value) ||
-      (!document.getElementById("almuerzo_entrada").value && document.getElementById("almuerzo_fondo").value)
-    ) {
-      showModal("Debes seleccionar tanto la entrada como el plato de fondo para el Almuerzo.")
-      return false
-    }
+    return valido;
   }
 
   if (step === 2) {
     // Validar campos requeridos
     const requiredFields = [
-      { id: "rname", label: "Nombre" },
-      { id: "rphone", label: "Número de contacto" },
-      { id: "rdate", label: "Fecha" },
-      { id: "rtime", label: "Hora" },
-      { id: "rparty-size", label: "Tamaño del grupo" },
+      { id: "name", label: "Nombre" }, // Corregido de rname a name
+      { id: "phone", label: "Número de contacto" }, // Corregido de rphone a phone
+      { id: "date", label: "Fecha" }, // Corregido de rdate a date
+      { id: "time", label: "Hora" }, // Corregido de rtime a time
+      { id: "partySize", label: "Tamaño del grupo" }, // Corregido de rparty-size a partySize
     ]
 
     for (const field of requiredFields) {
@@ -110,39 +119,39 @@ function validateStep(step) {
     }
 
     // Validar formato de teléfono (9 dígitos comenzando con 9)
-    const phone = document.getElementById("rphone").value
+    const phone = document.getElementById("phone").value // Corregido de rphone a phone
     if (!/^9\d{8}$/.test(phone)) {
       showModal("El teléfono debe tener 9 dígitos y empezar con 9.")
-      document.getElementById("rphone").classList.add("error-field")
-      document.getElementById("rphone").focus()
+      document.getElementById("phone").classList.add("error-field") // Corregido de rphone a phone
+      document.getElementById("phone").focus() // Corregido de rphone a phone
       return false
     } else {
-      document.getElementById("rphone").classList.remove("error-field")
+      document.getElementById("phone").classList.remove("error-field") // Corregido de rphone a phone
     }
 
     // Validar que la fecha no sea pasada
-    const selectedDate = new Date(document.getElementById("rdate").value + "T" + document.getElementById("rtime").value)
+    const selectedDate = new Date(document.getElementById("date").value + "T" + document.getElementById("time").value) // Corregido de rdate, rtime
     const now = new Date()
 
     if (selectedDate < now) {
       showModal("No puedes reservar en fechas u horas pasadas.")
-      document.getElementById("rdate").classList.add("error-field")
-      document.getElementById("rtime").classList.add("error-field")
+      document.getElementById("date").classList.add("error-field") // Corregido de rdate
+      document.getElementById("time").classList.add("error-field") // Corregido de rtime
       return false
     } else {
-      document.getElementById("rdate").classList.remove("error-field")
-      document.getElementById("rtime").classList.remove("error-field")
+      document.getElementById("date").classList.remove("error-field") // Corregido de rdate
+      document.getElementById("time").classList.remove("error-field") // Corregido de rtime
     }
 
     // Validar número de personas
-    const personas = Number.parseInt(document.getElementById("rparty-size").value)
+    const personas = Number.parseInt(document.getElementById("partySize").value) // Corregido de rparty-size
     if (isNaN(personas) || personas <= 0 || personas > 250) {
       showModal("El número de personas debe ser entre 1 y 250.")
-      document.getElementById("rparty-size").classList.add("error-field")
-      document.getElementById("rparty-size").focus()
+      document.getElementById("partySize").classList.add("error-field") // Corregido de rparty-size
+      document.getElementById("partySize").focus() // Corregido de rparty-size
       return false
     } else {
-      document.getElementById("rparty-size").classList.remove("error-field")
+      document.getElementById("partySize").classList.remove("error-field") // Corregido de rparty-size
     }
   }
 
@@ -155,13 +164,13 @@ function updateResumen() {
   if (!resumenDiv) return
 
   // Obtener datos personales
-  const nombre = document.getElementById("rname").value
-  const telefono = document.getElementById("rphone").value
+  const nombre = document.getElementById("name").value // Corregido de rname
+  const telefono = document.getElementById("phone").value // Corregido de rphone
   const email = document.getElementById("email").value || "No especificado"
-  const fecha = document.getElementById("rdate").value
-  const hora = document.getElementById("rtime").value
-  const personas = document.getElementById("rparty-size").value
-  const info = document.getElementById("radd-info").value || "Ninguna"
+  const fecha = document.getElementById("date").value // Corregido de rdate
+  const hora = document.getElementById("time").value // Corregido de rtime
+  const personas = document.getElementById("partySize").value // Corregido de rparty-size
+  const info = document.getElementById("additionalInfo").value || "Ninguna" // Corregido de radd-info
 
   // Calcular el total
   const total = calcularTotal()
@@ -184,9 +193,9 @@ function updateResumen() {
     `
 
   // Verificar desayuno
-  if (document.getElementById("desayuno").value && document.getElementById("pan_desayuno").value) {
-    const bebida = document.getElementById("desayuno")
-    const pan = document.getElementById("pan_desayuno")
+  if (document.getElementById("menuType").value === 'desayuno') {
+    const bebida = document.getElementById("desayunoBebida")
+    const pan = document.getElementById("desayunoPan")
 
     html += `
             <div class="menu-item">
@@ -200,11 +209,11 @@ function updateResumen() {
   }
 
   // Verificar almuerzo
-  if (document.getElementById("almuerzo_entrada").value && document.getElementById("almuerzo_fondo").value) {
-    const entrada = document.getElementById("almuerzo_entrada")
-    const fondo = document.getElementById("almuerzo_fondo")
-    const postre = document.getElementById("almuerzo_postre")
-    const bebida = document.getElementById("almuerzo_bebida")
+  if (document.getElementById("menuType").value === 'almuerzo') {
+    const entrada = document.getElementById("almuerzoEntrada")
+    const fondo = document.getElementById("almuerzoFondo")
+    const postre = document.getElementById("almuerzoPostre")
+    const bebida = document.getElementById("almuerzoBebida")
 
     html += `
             <div class="menu-item">
@@ -214,11 +223,11 @@ function updateResumen() {
                     <li>Plato de fondo: ${fondo.options[fondo.selectedIndex].text}</li>
         `
 
-    if (postre.value) {
+    if (postre.value && postre.value !== 'no_incluir') {
       html += `<li>Postre: ${postre.options[postre.selectedIndex].text}</li>`
     }
 
-    if (bebida.value) {
+    if (bebida.value && bebida.value !== 'no_incluir') {
       html += `<li>Bebida: ${bebida.options[bebida.selectedIndex].text}</li>`
     }
 
@@ -229,10 +238,10 @@ function updateResumen() {
   }
 
   // Verificar cena
-  if (document.getElementById("cena").value) {
-    const plato = document.getElementById("cena")
-    const postre = document.getElementById("cena_postre")
-    const bebida = document.getElementById("cena_bebida")
+  if (document.getElementById("menuType").value === 'cena') {
+    const plato = document.getElementById("cenaPlato")
+    const postre = document.getElementById("cenaPostre")
+    const bebida = document.getElementById("cenaBebida")
 
     html += `
             <div class="menu-item">
@@ -241,11 +250,11 @@ function updateResumen() {
                     <li>Plato principal: ${plato.options[plato.selectedIndex].text}</li>
         `
 
-    if (postre.value) {
+    if (postre.value && postre.value !== 'no_incluir') {
       html += `<li>Postre: ${postre.options[postre.selectedIndex].text}</li>`
     }
 
-    if (bebida.value) {
+    if (bebida.value && bebida.value !== 'no_incluir') {
       html += `<li>Bebida: ${bebida.options[bebida.selectedIndex].text}</li>`
     }
 
@@ -257,9 +266,7 @@ function updateResumen() {
 
   // Si no hay menús seleccionados
   if (
-    !document.getElementById("desayuno").value &&
-    !document.getElementById("almuerzo_entrada").value &&
-    !document.getElementById("cena").value
+    !document.getElementById("menuType").value
   ) {
     html += "<p>No se ha seleccionado ningún menú.</p>"
   }
@@ -343,7 +350,7 @@ function nextStep(next) {
 
     // Scroll al inicio del formulario
     window.scrollTo({
-      top: document.querySelector(".progress-steps").offsetTop - 50,
+      top: document.querySelector(".steps-indicator").offsetTop - 50, // Corregido a steps-indicator
       behavior: "smooth",
     })
 
@@ -371,19 +378,19 @@ function prevStep(prev) {
 
   // Scroll al inicio del formulario
   window.scrollTo({
-    top: document.querySelector(".progress-steps").offsetTop - 50,
+    top: document.querySelector(".steps-indicator").offsetTop - 50, // Corregido a steps-indicator
     behavior: "smooth",
   })
 }
 
 // Función para actualizar el indicador de progreso
 function updateProgressSteps() {
-  const progressSteps = document.querySelector(".progress-steps")
+  const progressSteps = document.querySelector(".steps-indicator") // Corregido a steps-indicator
   if (progressSteps) {
     progressSteps.setAttribute("data-step", currentStep)
 
     // Actualizar clases de los pasos
-    document.querySelectorAll(".progress-steps .step").forEach((step) => {
+    document.querySelectorAll(".steps-indicator .step").forEach((step) => { // Corregido a steps-indicator
       const stepNumber = Number.parseInt(step.dataset.step)
       step.classList.remove("active", "completed")
 
@@ -444,13 +451,17 @@ function validarPago() {
   }
 
   // Validar que se haya seleccionado al menos un menú
-  const desayunoSeleccionado =
-    document.getElementById("desayuno").value && document.getElementById("pan_desayuno").value
-  const almuerzoSeleccionado =
-    document.getElementById("almuerzo_entrada").value && document.getElementById("almuerzo_fondo").value
-  const cenaSeleccionada = document.getElementById("cena").value
+  const menuType = document.getElementById("menuType").value;
+  let menuSeleccionado = false;
+  if (menuType === 'desayuno' && document.getElementById("desayunoBebida").value && document.getElementById("desayunoPan").value) {
+    menuSeleccionado = true;
+  } else if (menuType === 'almuerzo' && document.getElementById("almuerzoEntrada").value && document.getElementById("almuerzoFondo").value) {
+    menuSeleccionado = true;
+  } else if (menuType === 'cena' && document.getElementById("cenaPlato").value) {
+    menuSeleccionado = true;
+  }
 
-  if (!desayunoSeleccionado && !almuerzoSeleccionado && !cenaSeleccionada) {
+  if (!menuSeleccionado) {
     showModal("Debe seleccionar al menos un menú para realizar la reserva.")
     return false
   }
@@ -468,15 +479,15 @@ document.addEventListener("change", (e) => {
 // Funciones de menú con animación
 function mostrarSeccion(tipo) {
   // Ocultar todas las secciones primero
-  document.querySelectorAll(".seccion-menu").forEach((seccion) => {
-    seccion.classList.remove("active")
+  document.querySelectorAll(".menu-options").forEach((seccion) => { // Corregido de seccion-menu a menu-options
+    seccion.classList.add("hidden") // Corregido de remove("active") a add("hidden")
   })
 
   // Mostrar la sección seleccionada con animación
-  const seccionAMostrar = document.getElementById(`seccion-${tipo}`)
+  const seccionAMostrar = document.getElementById(`opciones${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`) // Corregido de seccion-${tipo} a opciones${tipo}
   if (seccionAMostrar) {
     setTimeout(() => {
-      seccionAMostrar.classList.add("active")
+      seccionAMostrar.classList.remove("hidden") // Corregido de add("active") a remove("hidden")
     }, 100)
   }
 
@@ -495,6 +506,8 @@ function limpiarErrores() {
   campos.forEach((campo) => {
     campo.classList.remove("error-field")
   })
+  const errorMessages = document.querySelectorAll(".error-message");
+  errorMessages.forEach(msg => msg.remove());
 }
 
 // Función para mostrar animación de carga en el botón de pago
@@ -512,7 +525,7 @@ function mostrarCargaPago(mostrar) {
 // Inicialización cuando el DOM está cargado
 document.addEventListener("DOMContentLoaded", () => {
   // Configurar fecha mínima
-  const fechaInput = document.getElementById("rdate")
+  const fechaInput = document.getElementById("date") // Corregido de rdate a date
   if (fechaInput) {
     const hoy = new Date()
     const fechaFormateada = hoy.toISOString().split("T")[0]
@@ -560,7 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mostrarCargaPago(true)
 
         // Asegurarse de que el formulario se envíe correctamente
-        const form = document.getElementById("rform")
+        const form = document.getElementById("rform") // Assuming the form has id="rform"
         if (form) {
           // Asegurarse de que todos los campos necesarios estén incluidos
           const hiddenFields = [
@@ -594,7 +607,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Mostrar la primera sección de menú por defecto
-  mostrarSeccion("desayuno")
+  // This part is handled by PHP now based on the 'paso' variable
+  // mostrarSeccion("desayuno") 
 
   // Asignar eventos a los botones de menú
   document.querySelectorAll(".boton-menu").forEach((boton) => {
@@ -607,36 +621,69 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inicializar el indicador de progreso
   updateProgressSteps()
 
-  // Mostrar el primer paso
-  document.getElementById("step1").classList.add("active")
+  // Mostrar el primer paso (handled by PHP now)
+  // document.getElementById("step1").classList.add("active")
 
   // Asignar evento al formulario para asegurar que se envíen todos los datos
-  const formulario = document.getElementById("rform")
+  const formulario = document.querySelector("form.reservation-form") // Changed to select the current form
   if (formulario) {
     formulario.addEventListener("submit", (e) => {
-      // Si estamos en el paso de pago y la validación pasa, asegurarse de que se envíen todos los datos
-      if (currentStep === 4 && validarPago()) {
-        // Mostrar animación de carga
-        mostrarCargaPago(true)
+      // If we are on the payment step and validation passes, ensure all data is sent
+      // This logic is now handled by the PHP form submission directly for payment registration
+      // For multi-step form, PHP handles validation on submit, and client-side validation is done before advancing step
+      if (formulario.querySelector('input[name="registro_pago"]')) { // Check if it's the payment registration form
+        // Client-side validation for payment registration form
+        const phoneInput = formulario.querySelector('#phone');
+        const dateInput = formulario.querySelector('#reservation_date');
+        const payerNameInput = formulario.querySelector('#payer_name');
+        const paymentMethodRadios = formulario.querySelectorAll('input[name="payment_method"]');
+        const operationNumberInput = formulario.querySelector('#operation_number');
+        const securityCodeInput = formulario.querySelector('#security_code');
 
-        // Asegurarse de que los campos de tarjeta se envíen correctamente
-        const numeroTarjeta = document.getElementById("numero-tarjeta")
-        if (numeroTarjeta) {
-          // Crear o actualizar campo oculto para el número de tarjeta sin espacios
-          let hiddenField = document.querySelector('input[name="numero_tarjeta"]')
-          if (!hiddenField) {
-            hiddenField = document.createElement("input")
-            hiddenField.type = "hidden"
-            hiddenField.name = "numero_tarjeta"
-            formulario.appendChild(hiddenField)
-          }
-          hiddenField.value = numeroTarjeta.value.replace(/\s/g, "")
+        let isValid = true;
+        limpiarErrores();
+
+        if (!phoneInput.value.trim() || !/^9\d{8}$/.test(phoneInput.value.trim())) {
+            showModal("Por favor, introduce un número de teléfono válido (9 dígitos comenzando con 9).");
+            phoneInput.classList.add("error-field");
+            isValid = false;
+        }
+        if (!dateInput.value.trim()) {
+            showModal("La fecha de reserva es obligatoria.");
+            dateInput.classList.add("error-field");
+            isValid = false;
+        }
+        if (!payerNameInput.value.trim()) {
+            showModal("El nombre del pagador es obligatorio.");
+            payerNameInput.classList.add("error-field");
+            isValid = false;
+        }
+        let paymentMethodSelected = false;
+        paymentMethodRadios.forEach(radio => {
+            if (radio.checked) paymentMethodSelected = true;
+        });
+        if (!paymentMethodSelected) {
+            showModal("Debes seleccionar un método de pago.");
+            isValid = false;
+        }
+        if (!operationNumberInput.value.trim()) {
+            showModal("El número de operación es obligatorio.");
+            operationNumberInput.classList.add("error-field");
+            isValid = false;
+        }
+        if (formulario.querySelector('#yape').checked && !securityCodeInput.value.trim()) {
+            showModal("El código de seguridad es obligatorio para pagos con Yape.");
+            securityCodeInput.classList.add("error-field");
+            isValid = false;
         }
 
-        console.log("Formulario enviado correctamente")
+        if (!isValid) {
+            e.preventDefault();
+        }
       } else {
-        e.preventDefault() // Evitar envío si no estamos en el paso de pago o la validación falla
-        console.log("Formulario no enviado - validación fallida o paso incorrecto")
+        // This is for the multi-step reservation form
+        // The PHP handles the step advancement and validation on the server-side
+        // Client-side validation is done by nextStep() before submitting
       }
     })
   }
@@ -677,11 +724,981 @@ function addRippleEffect(event) {
   button.appendChild(circle)
 }
 
-// Agregar efecto de onda a todos los botones
 document.addEventListener("DOMContentLoaded", () => {
-  const buttons = document.querySelectorAll("button, .boton-menu, .btn-volver, .btn-pagar")
+  // Mostrar/ocultar el campo de código de seguridad según el método de pago
+  const yapeRadio = document.getElementById("yape")
+  const securityCodeGroup = document.getElementById("security_code_group")
+  const securityCodeInput = document.getElementById("security_code")
+
+  if (yapeRadio && securityCodeGroup) {
+    // Función para actualizar la visibilidad del campo de código de seguridad
+    function updateSecurityCodeVisibility() {
+      if (yapeRadio.checked) {
+        securityCodeGroup.style.display = "block"
+        securityCodeInput.setAttribute("required", "required")
+        // Animación de aparición
+        securityCodeGroup.style.opacity = "0"
+        setTimeout(() => {
+          securityCodeGroup.style.opacity = "1"
+        }, 10)
+      } else {
+        // Animación de desaparición
+        securityCodeGroup.style.opacity = "0"
+        setTimeout(() => {
+          securityCodeGroup.style.display = "none"
+          securityCodeInput.removeAttribute("required")
+        }, 300)
+      }
+    }
+
+    // Verificar estado inicial
+    updateSecurityCodeVisibility()
+
+    // Agregar listeners a los radio buttons
+    document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
+      radio.addEventListener("change", updateSecurityCodeVisibility)
+    })
+  }
+
+  // Manejar la carga de archivos
+  const fileInput = document.getElementById("voucher")
+  const fileName = document.querySelector(".file-name")
+
+  if (fileInput && fileName) {
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        fileName.textContent = fileInput.files[0].name
+        // Animación de cambio de texto
+        fileName.classList.add("file-selected")
+        setTimeout(() => {
+          fileName.classList.remove("file-selected")
+        }, 1000)
+      } else {
+        fileName.textContent = "Sin archivos seleccionados"
+      }
+    })
+  }
+
+  // Manejar las pestañas de métodos de pago
+  const tabButtons = document.querySelectorAll(".payment-tab-btn")
+
+  if (tabButtons.length > 0) {
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        // Remover clase active de todos los botones
+        tabButtons.forEach((btn) => btn.classList.remove("active"))
+
+        // Agregar clase active al botón clickeado
+        this.classList.add("active")
+
+        // Ocultar todos los paneles con animación
+        document.querySelectorAll(".payment-tab-pane").forEach((pane) => {
+          pane.style.opacity = "0"
+          setTimeout(() => {
+            pane.classList.remove("active")
+          }, 300)
+        })
+
+        // Mostrar el panel correspondiente con animación
+        const tabId = this.getAttribute("data-tab")
+        const activePane = document.getElementById(tabId)
+        setTimeout(() => {
+          activePane.classList.add("active")
+          setTimeout(() => {
+            activePane.style.opacity = "1"
+          }, 10)
+        }, 300)
+      })
+    })
+  }
+
+  // Mostrar/ocultar opciones de menú según la selección con animación
+  const menuTypeSelect = document.getElementById("menuType")
+
+  if (menuTypeSelect) {
+    menuTypeSelect.addEventListener("change", function () {
+      const menuType = this.value
+
+      // Ocultar todas las opciones con animación
+      document.querySelectorAll(".menu-options").forEach((option) => {
+        option.style.opacity = "0"
+        setTimeout(() => {
+          option.classList.add("hidden")
+        }, 300)
+      })
+
+      // Mostrar la opción seleccionada con animación
+      if (menuType) {
+        const selectedOption = document.getElementById(
+          "opciones" + menuType.charAt(0).toUpperCase() + menuType.slice(1),
+        )
+        setTimeout(() => {
+          selectedOption.classList.remove("hidden")
+          setTimeout(() => {
+            selectedOption.style.opacity = "1"
+          }, 10)
+        }, 300)
+      }
+    })
+  }
+
+  // Efecto de onda para botones
+  const buttons = document.querySelectorAll(".btn")
   buttons.forEach((button) => {
-    button.addEventListener("click", addRippleEffect)
+    button.addEventListener("click", function (e) {
+      const x = e.clientX - e.target.getBoundingClientRect().left
+      const y = e.clientY - e.target.getBoundingClientRect().top
+
+      const ripple = document.createElement("span")
+      ripple.classList.add("ripple")
+      ripple.style.left = `${x}px`
+      ripple.style.top = `${y}px`
+
+      this.appendChild(ripple)
+
+      setTimeout(() => {
+        ripple.remove()
+      }, 600)
+    })
   })
+
+  // Validación de formularios
+  const forms = document.querySelectorAll("form")
+  forms.forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      let isValid = true
+      const requiredFields = form.querySelectorAll("[required]")
+
+      requiredFields.forEach((field) => {
+        if (!field.value.trim()) {
+          isValid = false
+          field.classList.add("error-field")
+
+          // Crear mensaje de error si no existe
+          let errorMessage = field.nextElementSibling
+          if (!errorMessage || !errorMessage.classList.contains("error-message")) {
+            errorMessage = document.createElement("div")
+            errorMessage.classList.add("error-message")
+            errorMessage.textContent = "Este campo es obligatorio"
+            field.parentNode.insertBefore(errorMessage, field.nextSibling)
+          }
+        } else {
+          field.classList.remove("error-field")
+
+          // Eliminar mensaje de error si existe
+          const errorMessage = field.nextElementSibling
+          if (errorMessage && errorMessage.classList.contains("error-message")) {
+            errorMessage.remove()
+          }
+        }
+      })
+
+      if (!isValid) {
+        e.preventDefault()
+
+        // Scroll al primer campo con error
+        const firstError = form.querySelector(".error-field")
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" })
+          firstError.focus()
+        }
+      }
+    })
+  })
+
+  // Animación para alertas
+  const alerts = document.querySelectorAll(".alert")
+  alerts.forEach((alert) => {
+    // Añadir botón de cierre
+    const closeBtn = document.createElement("span")
+    closeBtn.innerHTML = "&times;"
+    closeBtn.classList.add("alert-close")
+    alert.appendChild(closeBtn)
+
+    // Funcionalidad para cerrar la alerta
+    closeBtn.addEventListener("click", () => {
+      alert.style.opacity = "0"
+      setTimeout(() => {
+        alert.style.display = "none"
+      }, 300)
+    })
+
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+      alert.style.opacity = "0"
+      setTimeout(() => {
+        alert.style.display = "none"
+      }, 300)
+    }, 5000)
+  })
+
+  // Animación para transiciones entre pasos
+  const stepButtons = document.querySelectorAll(".form-actions .btn")
+  stepButtons.forEach((button) => {
+    if (!button.classList.contains("btn-outline")) {
+      button.addEventListener("click", function () {
+        const currentForm = this.closest("form")
+        if (currentForm && currentForm.checkValidity()) {
+          currentForm.style.opacity = "0"
+          setTimeout(() => {
+            currentForm.submit()
+          }, 300)
+        }
+      })
+    }
+  })
+
+  // Mostrar notificación de éxito después de enviar el formulario
+  const urlParams = new URLSearchParams(window.location.search)
+  const success = urlParams.get("success")
+  const error = urlParams.get("error")
+
+  if (success) {
+    showNotification("¡Operación completada con éxito!", "success")
+  } else if (error) {
+    showNotification("Ha ocurrido un error. Por favor, inténtalo de nuevo.", "error")
+  }
+
+  function showNotification(message, type) {
+    const notification = document.createElement("div")
+    notification.classList.add("notification", `notification-${type}`)
+    notification.textContent = message
+
+    document.body.appendChild(notification)
+
+    setTimeout(() => {
+      notification.classList.add("show")
+    }, 10)
+
+    setTimeout(() => {
+      notification.classList.remove("show")
+      setTimeout(() => {
+        notification.remove()
+      }, 300)
+    }, 3000)
+  }
+})
+/**
+ * Sistema completo de reservas con notificaciones y animaciones
+ * Integra validación, navegación por pasos, notificaciones y efectos visuales
+ */
+
+// Variables globales
+
+// Clase para el sistema de notificaciones
+class ReservaNotificaciones {
+  constructor() {
+    this.apiUrl = "api/notificaciones.php"
+  }
+
+  /**
+   * Envía una notificación por correo electrónico
+   */
+  async enviarNotificacionEmail(tipo, datos) {
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo: tipo,
+          medio: "email",
+          datos: datos,
+        }),
+      })
+      const data = await response.json()
+      console.log("Notificación por email enviada:", data)
+      return data
+    } catch (error) {
+      console.error("Error al enviar notificación por email:", error)
+      throw error
+    }
+  }
+
+  /**
+   * Envía una notificación por WhatsApp
+   */
+  async enviarNotificacionWhatsApp(tipo, datos) {
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo: tipo,
+          medio: "whatsapp",
+          datos: datos,
+        }),
+      })
+      const data = await response.json()
+      console.log("Notificación por WhatsApp enviada:", data)
+      return data
+    } catch (error) {
+      console.error("Error al enviar notificación por WhatsApp:", error)
+      throw error
+    }
+  }
+
+  /**
+   * Envía confirmación de pago
+   */
+  async enviarConfirmacionPago(reserva) {
+    const mensaje = `¡Gracias ${reserva.nombre}! Hemos confirmado tu pago. Tu reserva para el ${reserva.fecha} ha sido confirmada. ¡Te esperamos!`
+
+    const datos = {
+      ...reserva,
+      mensaje: mensaje,
+    }
+
+    const promesas = []
+
+    if (reserva.email) {
+      promesas.push(this.enviarNotificacionEmail("confirmacion_pago", datos))
+    }
+
+    if (reserva.telefono) {
+      promesas.push(this.enviarNotificacionWhatsApp("confirmacion_pago", datos))
+    }
+
+    try {
+      await Promise.all(promesas)
+      return {
+        success: true,
+        message: "Confirmación de pago enviada",
+      }
+    } catch (error) {
+      console.error("Error al enviar confirmaciones:", error)
+      return {
+        success: false,
+        message: "Error al enviar confirmaciones",
+      }
+    }
+  }
+}
+
+// Inicialización del DOM
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicializar sistema de notificaciones
+  notificationSystem = new ReservaNotificaciones()
+
+  // Configurar validación de formularios
+  setupFormValidation()
+
+  // Configurar navegación por pasos
+  setupStepNavigation()
+
+  // Configurar animaciones
+  setupAnimations()
+
+  // Configurar eventos específicos
+  setupSpecificEvents()
+
+  // Configurar efectos visuales
+  setupVisualEffects()
 })
 
+/**
+ * Configuración de validación de formularios
+ */
+function setupFormValidation() {
+  const forms = document.querySelectorAll("form")
+
+  forms.forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      if (!validateCurrentStep(form)) {
+        e.preventDefault()
+        return false
+      }
+
+      // Mostrar animación de carga
+      showLoadingAnimation(form)
+    })
+
+    // Validación en tiempo real
+    const inputs = form.querySelectorAll("input, select, textarea")
+    inputs.forEach((input) => {
+      input.addEventListener("blur", () => validateField(input))
+      input.addEventListener("input", () => clearFieldError(input))
+    })
+  })
+}
+
+/**
+ * Validación del paso actual
+ */
+function validateCurrentStep(form) {
+  let isValid = true
+  const requiredFields = form.querySelectorAll("[required]")
+
+  clearAllErrors()
+
+  requiredFields.forEach((field) => {
+    if (!validateField(field)) {
+      isValid = false
+    }
+  })
+
+  // Validaciones específicas por paso
+  if (form.querySelector('input[name="paso"]')) {
+    const paso = Number.parseInt(form.querySelector('input[name="paso"]').value)
+
+    switch (paso) {
+      case 1:
+        isValid = validateMenuSelection() && isValid
+        break
+      case 2:
+        isValid = validatePersonalData() && isValid
+        break
+      case 3:
+        isValid = validateSummary() && isValid
+        break
+    }
+  }
+
+  // Validación para registro de pago
+  if (form.querySelector('input[name="registro_pago"]')) {
+    isValid = validatePaymentRegistration() && isValid
+  }
+
+  if (!isValid) {
+    showErrorNotification("Por favor, corrige los errores en el formulario")
+    scrollToFirstError()
+  }
+
+  return isValid
+}
+
+/**
+ * Validación de campo individual
+ */
+function validateField(field) {
+  const value = field.value.trim()
+  let isValid = true
+  let errorMessage = ""
+
+  // Validación de campos requeridos
+  if (field.hasAttribute("required") && !value) {
+    errorMessage = "Este campo es obligatorio"
+    isValid = false
+  }
+
+  // Validaciones específicas por tipo
+  if (value && isValid) {
+    switch (field.type) {
+      case "email":
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errorMessage = "Ingresa un email válido"
+          isValid = false
+        }
+        break
+
+      case "tel":
+        if (!/^9\d{8}$/.test(value)) {
+          errorMessage = "Debe ser un número de 9 dígitos que comience con 9"
+          isValid = false
+        }
+        break
+
+      case "number":
+        const min = field.getAttribute("min")
+        const max = field.getAttribute("max")
+        const numValue = Number.parseInt(value)
+
+        if (min && numValue < Number.parseInt(min)) {
+          errorMessage = `El valor mínimo es ${min}`
+          isValid = false
+        }
+        if (max && numValue > Number.parseInt(max)) {
+          errorMessage = `El valor máximo es ${max}`
+          isValid = false
+        }
+        break
+
+      case "date":
+        const selectedDate = new Date(value)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        if (selectedDate < today) {
+          errorMessage = "No puedes seleccionar una fecha pasada"
+          isValid = false
+        }
+        break
+    }
+  }
+
+  // Mostrar/ocultar error
+  if (!isValid) {
+    showFieldError(field, errorMessage)
+  } else {
+    clearFieldError(field)
+  }
+
+  return isValid
+}
+
+/**
+ * Validación de selección de menú
+ */
+function validateMenuSelection() {
+  const menuType = document.getElementById("menuType")?.value
+
+  if (!menuType) {
+    showFieldError(document.getElementById("menuType"), "Debes seleccionar un tipo de menú")
+    return false
+  }
+
+  let isValid = true
+
+  switch (menuType) {
+    case "desayuno":
+      const bebida = document.getElementById("desayunoBebida")?.value
+      const pan = document.getElementById("desayunoPan")?.value
+
+      if (!bebida) {
+        showFieldError(document.getElementById("desayunoBebida"), "Selecciona una bebida")
+        isValid = false
+      }
+      if (!pan) {
+        showFieldError(document.getElementById("desayunoPan"), "Selecciona un tipo de pan")
+        isValid = false
+      }
+      break
+
+    case "almuerzo":
+      const entrada = document.getElementById("almuerzoEntrada")?.value
+      const fondo = document.getElementById("almuerzoFondo")?.value
+
+      if (!entrada) {
+        showFieldError(document.getElementById("almuerzoEntrada"), "Selecciona una entrada")
+        isValid = false
+      }
+      if (!fondo) {
+        showFieldError(document.getElementById("almuerzoFondo"), "Selecciona un plato de fondo")
+        isValid = false
+      }
+      break
+
+    case "cena":
+      const plato = document.getElementById("cenaPlato")?.value
+
+      if (!plato) {
+        showFieldError(document.getElementById("cenaPlato"), "Selecciona un plato principal")
+        isValid = false
+      }
+      break
+  }
+
+  return isValid
+}
+
+/**
+ * Validación de datos personales
+ */
+function validatePersonalData() {
+  let isValid = true
+
+  // Validar fecha y hora
+  const fecha = document.getElementById("date")?.value
+  const hora = document.getElementById("time")?.value
+
+  if (fecha && hora) {
+    const fechaHora = new Date(`${fecha}T${hora}`)
+    const ahora = new Date()
+
+    if (fechaHora <= ahora) {
+      showFieldError(document.getElementById("date"), "La fecha y hora deben ser futuras")
+      showFieldError(document.getElementById("time"), "La fecha y hora deben ser futuras")
+      isValid = false
+    }
+  }
+
+  return isValid
+}
+
+/**
+ * Validación del resumen
+ */
+function validateSummary() {
+  // Aquí puedes agregar validaciones adicionales para el resumen
+  return true
+}
+
+/**
+ * Validación de registro de pago
+ */
+function validatePaymentRegistration() {
+  let isValid = true
+
+  const metodoPago = document.querySelector('input[name="payment_method"]:checked')?.value
+  const codigoSeguridad = document.getElementById("security_code")
+
+  if (metodoPago === "yape" && codigoSeguridad && !codigoSeguridad.value.trim()) {
+    showFieldError(codigoSeguridad, "El código de seguridad es obligatorio para Yape")
+    isValid = false
+  }
+
+  return isValid
+}
+
+/**
+ * Mostrar error en campo
+ */
+function showFieldError(field, message) {
+  field.classList.add("error-field")
+
+  // Remover mensaje de error existente
+  const existingError = field.parentNode.querySelector(".error-message")
+  if (existingError) {
+    existingError.remove()
+  }
+
+  // Crear nuevo mensaje de error
+  const errorDiv = document.createElement("div")
+  errorDiv.classList.add("error-message")
+  errorDiv.textContent = message
+
+  field.parentNode.insertBefore(errorDiv, field.nextSibling)
+
+  // Animación de aparición
+  setTimeout(() => {
+    errorDiv.style.opacity = "1"
+    errorDiv.style.transform = "translateY(0)"
+  }, 10)
+}
+
+/**
+ * Limpiar error de campo
+ */
+function clearFieldError(field) {
+  field.classList.remove("error-field")
+
+  const errorMessage = field.parentNode.querySelector(".error-message")
+  if (errorMessage) {
+    errorMessage.style.opacity = "0"
+    errorMessage.style.transform = "translateY(-10px)"
+    setTimeout(() => {
+      errorMessage.remove()
+    }, 300)
+  }
+}
+
+/**
+ * Limpiar todos los errores
+ */
+function clearAllErrors() {
+  document.querySelectorAll(".error-field").forEach((field) => {
+    field.classList.remove("error-field")
+  })
+
+  document.querySelectorAll(".error-message").forEach((error) => {
+    error.remove()
+  })
+}
+
+/**
+ * Scroll al primer error
+ */
+function scrollToFirstError() {
+  const firstError = document.querySelector(".error-field")
+  if (firstError) {
+    firstError.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    })
+    firstError.focus()
+  }
+}
+
+/**
+ * Configuración de navegación por pasos
+ */
+function setupStepNavigation() {
+  // Mostrar/ocultar opciones de menú
+  const menuTypeSelect = document.getElementById("menuType")
+  if (menuTypeSelect) {
+    menuTypeSelect.addEventListener("change", function () {
+      const menuType = this.value
+
+      // Ocultar todas las opciones con animación
+      document.querySelectorAll(".menu-options").forEach((option) => {
+        option.style.opacity = "0"
+        setTimeout(() => {
+          option.classList.add("hidden")
+        }, 300)
+      })
+
+      // Mostrar la opción seleccionada con animación
+      if (menuType) {
+        const selectedOption = document.getElementById(
+          "opciones" + menuType.charAt(0).toUpperCase() + menuType.slice(1),
+        )
+        if (selectedOption) {
+          setTimeout(() => {
+            selectedOption.classList.remove("hidden")
+            setTimeout(() => {
+              selectedOption.style.opacity = "1"
+            }, 10)
+          }, 300)
+        }
+      }
+    })
+  }
+}
+
+/**
+ * Configuración de animaciones
+ */
+function setupAnimations() {
+  // Animaciones para transiciones entre pasos
+  const stepButtons = document.querySelectorAll(".form-actions .btn")
+  stepButtons.forEach((button) => {
+    if (!button.classList.contains("btn-outline")) {
+      button.addEventListener("click", function (e) {
+        const currentForm = this.closest("form")
+        if (currentForm) {
+          // Agregar clase de carga
+          this.classList.add("loading")
+
+          // Animación de salida del formulario
+          currentForm.style.opacity = "0.7"
+          currentForm.style.transform = "scale(0.98)"
+        }
+      })
+    }
+  })
+
+  // Efecto de onda para botones
+  const buttons = document.querySelectorAll(".btn")
+  buttons.forEach((button) => {
+    button.addEventListener("click", function (e) {
+      const x = e.clientX - e.target.getBoundingClientRect().left
+      const y = e.clientY - e.target.getBoundingClientRect().top
+
+      const ripple = document.createElement("span")
+      ripple.classList.add("ripple")
+      ripple.style.left = `${x}px`
+      ripple.style.top = `${y}px`
+
+      this.appendChild(ripple)
+
+      setTimeout(() => {
+        ripple.remove()
+      }, 600)
+    })
+  })
+}
+
+/**
+ * Configuración de eventos específicos
+ */
+function setupSpecificEvents() {
+  // Manejo de métodos de pago
+  const paymentMethods = document.querySelectorAll('input[name="payment_method"]')
+  const securityCodeGroup = document.getElementById("security_code_group")
+  const securityCodeInput = document.getElementById("security_code")
+
+  if (paymentMethods.length > 0 && securityCodeGroup) {
+    paymentMethods.forEach((radio) => {
+      radio.addEventListener("change", function () {
+        if (this.value === "yape") {
+          securityCodeGroup.style.display = "block"
+          securityCodeInput.setAttribute("required", "required")
+
+          // Animación de aparición
+          securityCodeGroup.style.opacity = "0"
+          setTimeout(() => {
+            securityCodeGroup.style.opacity = "1"
+          }, 10)
+        } else {
+          // Animación de desaparición
+          securityCodeGroup.style.opacity = "0"
+          setTimeout(() => {
+            securityCodeGroup.style.display = "none"
+            securityCodeInput.removeAttribute("required")
+          }, 300)
+        }
+      })
+    })
+  }
+
+  // Manejo de carga de archivos
+  const fileInput = document.getElementById("voucher")
+  const fileName = document.querySelector(".file-name")
+
+  if (fileInput && fileName) {
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        fileName.textContent = fileInput.files[0].name
+        fileName.classList.add("file-selected")
+
+        setTimeout(() => {
+          fileName.classList.remove("file-selected")
+        }, 1000)
+      } else {
+        fileName.textContent = "Sin archivos seleccionados"
+      }
+    })
+  }
+
+  // Pestañas de métodos de pago
+  const tabButtons = document.querySelectorAll(".payment-tab-btn")
+  if (tabButtons.length > 0) {
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        // Remover clase active de todos los botones
+        tabButtons.forEach((btn) => btn.classList.remove("active"))
+
+        // Agregar clase active al botón clickeado
+        this.classList.add("active")
+
+        // Ocultar todos los paneles con animación
+        document.querySelectorAll(".payment-tab-pane").forEach((pane) => {
+          pane.style.opacity = "0"
+          setTimeout(() => {
+            pane.classList.remove("active")
+          }, 300)
+        })
+
+        // Mostrar el panel correspondiente con animación
+        const tabId = this.getAttribute("data-tab")
+        const activePane = document.getElementById(tabId)
+        if (activePane) {
+          setTimeout(() => {
+            activePane.classList.add("active")
+            setTimeout(() => {
+              activePane.style.opacity = "1"
+            }, 10)
+          }, 300)
+        }
+      })
+    })
+  }
+}
+
+/**
+ * Configuración de efectos visuales
+ */
+function setupVisualEffects() {
+  // Animación para alertas
+  const alerts = document.querySelectorAll(".alert")
+  alerts.forEach((alert) => {
+    // Añadir botón de cierre
+    const closeBtn = document.createElement("span")
+    closeBtn.innerHTML = "&times;"
+    closeBtn.classList.add("alert-close")
+    alert.appendChild(closeBtn)
+
+    // Funcionalidad para cerrar la alerta
+    closeBtn.addEventListener("click", () => {
+      alert.style.opacity = "0"
+      alert.style.transform = "translateY(-20px)"
+      setTimeout(() => {
+        alert.style.display = "none"
+      }, 300)
+    })
+
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+      if (alert.style.display !== "none") {
+        alert.style.opacity = "0"
+        alert.style.transform = "translateY(-20px)"
+        setTimeout(() => {
+          alert.style.display = "none"
+        }, 300)
+      }
+    }, 5000)
+  })
+
+  // Efectos hover para elementos interactivos
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.closest(".menu-item")) {
+      const item = e.target.closest(".menu-item")
+      item.style.transform = "translateY(-2px)"
+      item.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)"
+    }
+  })
+
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.closest(".menu-item")) {
+      const item = e.target.closest(".menu-item")
+      item.style.transform = ""
+      item.style.boxShadow = ""
+    }
+  })
+}
+
+/**
+ * Mostrar animación de carga
+ */
+function showLoadingAnimation(form) {
+  const submitBtn = form.querySelector('button[type="submit"]')
+  if (submitBtn) {
+    submitBtn.classList.add("loading")
+    submitBtn.disabled = true
+
+    const originalText = submitBtn.textContent
+    submitBtn.textContent = "Procesando..."
+
+    // Restaurar después de 3 segundos si no se redirige
+    setTimeout(() => {
+      submitBtn.classList.remove("loading")
+      submitBtn.disabled = false
+      submitBtn.textContent = originalText
+    }, 3000)
+  }
+}
+
+/**
+ * Mostrar notificación de error
+ */
+function showErrorNotification(message) {
+  showNotification(message, "error")
+}
+
+/**
+ * Mostrar notificación de éxito
+ */
+function showSuccessNotification(message) {
+  showNotification(message, "success")
+}
+
+/**
+ * Mostrar notificación general
+ */
+function showNotification(message, type) {
+  const notification = document.createElement("div")
+  notification.classList.add("notification", `notification-${type}`)
+  notification.textContent = message
+
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    notification.classList.add("show")
+  }, 10)
+
+  setTimeout(() => {
+    notification.classList.remove("show")
+    setTimeout(() => {
+      notification.remove()
+    }, 300)
+  }, 4000)
+}
+
+/**
+ * Función para abrir el login administrativo
+ */
+function abrirLogin() {
+  window.open(
+    "admin/login.php",
+    "LoginAdmin",
+    "width=500,height=600,top=100,left=100,toolbar=no,location=no,directories=no,status=no,menubar=no",
+  )
+}
+
+// Exportar funciones globales
+window.abrirLogin = abrirLogin
+window.showSuccessNotification = showSuccessNotification
+window.showErrorNotification = showErrorNotification

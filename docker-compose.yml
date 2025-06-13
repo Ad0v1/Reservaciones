@@ -7,7 +7,9 @@ services:
     volumes:
       - ./frontend/public:/var/www/html
       - ./frontend/assets:/var/www/html/assets
-
+      - ./backend/controllers:/var/www/html/controllers
+      - ./backend/includes:/var/www/html/includes
+      - ./frontend/public:/var/www/html/public
 
     env_file: 
       - .env
